@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --warm-beige: #F5F1E8;
+  --night-blue: #2C3E5A;
+  --soft-gray: #E8E5DF;
+  --soft-blue: #B8D4E8;
+  --morning-blue: #A8C8E0;
+  --dark-blue: #1A2332;
+  --text-soft: #6B6B6B;
+  --text-dark: #2C3E5A;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* 移动优先 */
+@media (min-width: 768px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #FFFFFF;
+  }
+  
+  #app {
+    max-width: 100%;
+    box-shadow: none;
+  }
+}
+
