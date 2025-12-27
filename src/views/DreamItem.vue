@@ -38,19 +38,9 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import SleepyCat from '../components/SleepyCat.vue'
 import StatusBar from '../components/StatusBar.vue'
+import { addCollectedItem, dreamItems } from '../utils/dreamCollection.js'
 
 const router = useRouter()
-
-const dreamItems = [
-  { emoji: '⭐', name: 'star' },
-  { emoji: '🛏️', name: 'blanket' },
-  { emoji: '💡', name: 'light' },
-  { emoji: '🌙', name: 'moon' },
-  { emoji: '✨', name: 'sparkle' },
-  { emoji: '🦋', name: 'butterfly' },
-  { emoji: '🌸', name: 'flower' },
-  { emoji: '🍃', name: 'leaf' }
-]
 
 const dreamItem = ref(dreamItems[0])
 
@@ -58,6 +48,9 @@ onMounted(() => {
   // 随机选择一个梦境物品
   const randomIndex = Math.floor(Math.random() * dreamItems.length)
   dreamItem.value = dreamItems[randomIndex]
+  
+  // 将物品添加到收藏中
+  addCollectedItem(dreamItem.value.id)
 })
 
 const goHome = () => {
@@ -80,12 +73,13 @@ const goHome = () => {
   max-width: 448px;
   height: 698px;
   background: linear-gradient(180deg, rgba(232, 213, 242, 1) 0%, rgba(212, 197, 232, 1) 100%);
-  border-radius: 0;
-  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 24px;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(20px);
 }
 
 .dream-item-content {
@@ -93,17 +87,19 @@ const goHome = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 48px 0;
+  justify-content: space-between;
+  padding: 48px 0 32px;
   position: relative;
 }
 
 .item-container {
   position: absolute;
-  top: 171px;
+  top: 120px;
   left: 50%;
   transform: translateX(-50%);
   width: 80px;
   height: 80px;
+  z-index: 2;
 }
 
 .dream-item-icon {
@@ -128,7 +124,7 @@ const goHome = () => {
   align-items: center;
   width: 200px;
   height: 200px;
-  margin-top: 171px;
+  margin-top: 80px;
 }
 
 .text-section {
@@ -136,8 +132,8 @@ const goHome = () => {
   flex-direction: column;
   gap: 8px;
   align-items: center;
-  width: 203px;
-  margin-top: 32px;
+  width: 280px;
+  margin-top: 24px;
 }
 
 .dream-title {
@@ -168,24 +164,49 @@ const goHome = () => {
 .thank-button {
   width: 320px;
   height: 64px;
-  background: #C8B6D6;
+  background: linear-gradient(135deg, #C8B6D6 0%, #B8A6C6 100%);
   border: none;
-  border-radius: 9999px;
+  border-radius: 32px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  letter-spacing: -1.953125%;
+  letter-spacing: -0.5px;
   color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1), 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-  margin-top: 32px;
-  transition: all 0.2s;
+  box-shadow: 0px 8px 24px rgba(200, 182, 214, 0.4);
+  margin-top: 24px;
+  margin-bottom: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.thank-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border-radius: 32px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.thank-button:hover::before {
+  opacity: 1;
+}
+
+.thank-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0px 12px 32px rgba(200, 182, 214, 0.5);
 }
 
 .thank-button:active {
-  transform: scale(0.98);
-  opacity: 0.9;
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0px 4px 16px rgba(200, 182, 214, 0.4);
 }
 
 .decorative-circle {

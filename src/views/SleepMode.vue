@@ -18,19 +18,70 @@
       
       <div class="bottom-indicator"></div>
     </div>
+    
+    <!-- 闹钟弹窗 -->
+    <AlarmModal 
+      :show="showAlarmModal" 
+      @restMore="handleRestMore"
+      @awakeNow="handleAwakeNow"
+    />
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import LyingCat from '../components/LyingCat.vue'
 import StatusBar from '../components/StatusBar.vue'
+import AlarmModal from '../components/AlarmModal.vue'
 
 const router = useRouter()
+const showAlarmModal = ref(false)
 
 const goToInterrupted = () => {
-  router.push('/interrupted')
+  if (!showAlarmModal.value) {
+    router.push('/interrupted')
+  }
 }
+
+// 监听闹钟触发事件
+const handleAlarmTriggered = (event) => {
+  console.log('睡眠页面：收到闹钟事件', event.detail)
+  
+  // 只有当前确实在睡眠页面时才处理
+  if (router.currentRoute.value.path === '/sleep') {
+    console.log('睡眠页面：确认在睡眠页面，显示闹钟弹窗')
+    showAlarmModal.value = true
+  } else {
+    console.log('睡眠页面：不在睡眠页面，忽略事件')
+  }
+}
+
+const handleRestMore = () => {
+  console.log('用户选择继续睡觉')
+  // 不关闭弹窗，让用户可以继续选择
+  // showAlarmModal.value = false
+  console.log('弹窗保持显示，用户可以继续选择')
+}
+
+const handleAwakeNow = () => {
+  console.log('用户选择现在醒来')
+  showAlarmModal.value = false
+  // 直接跳转到梦境物品页面
+  router.push('/dream-item')
+}
+
+onMounted(() => {
+  console.log('睡眠页面：开始监听闹钟事件')
+  // 监听闹钟事件
+  window.addEventListener('alarmTriggered', handleAlarmTriggered)
+})
+
+onUnmounted(() => {
+  console.log('睡眠页面：停止监听闹钟事件')
+  // 清理事件监听
+  window.removeEventListener('alarmTriggered', handleAlarmTriggered)
+})
 </script>
 
 <style scoped>
@@ -48,12 +99,13 @@ const goToInterrupted = () => {
   max-width: 448px;
   height: 698px;
   background: linear-gradient(180deg, rgba(44, 62, 80, 1) 0%, rgba(52, 73, 94, 1) 100%);
-  border-radius: 0;
-  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 24px;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(20px);
 }
 
 .sleep-content {
@@ -88,8 +140,15 @@ const goToInterrupted = () => {
 
 .decorative-circle {
   position: absolute;
-  background: #B8C5D6;
+  background: linear-gradient(135deg, #B8C5D6 0%, rgba(184, 197, 214, 0.8) 100%);
   border-radius: 50%;
+  filter: blur(1px);
+  animation: gentle-float 6s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-10px) scale(1.1); opacity: 0.8; }
 }
 
 .circle-1 {

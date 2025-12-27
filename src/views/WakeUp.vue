@@ -62,12 +62,13 @@ const handleWakeUp = () => {
   max-width: 448px;
   height: 698px;
   background: linear-gradient(180deg, rgba(255, 244, 230, 1) 0%, rgba(255, 232, 204, 1) 50%, rgba(255, 217, 168, 1) 100%);
-  border-radius: 0;
-  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 24px;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(20px);
 }
 
 .wake-up-content {
@@ -126,24 +127,48 @@ const handleWakeUp = () => {
 .awake-button {
   width: 320px;
   height: 64px;
-  background: #FFB366;
+  background: linear-gradient(135deg, #FFB366 0%, #FF9F4A 100%);
   border: none;
-  border-radius: 9999px;
+  border-radius: 32px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  letter-spacing: -1.953125%;
+  letter-spacing: -0.5px;
   color: #FFFFFF;
   cursor: pointer;
-  box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1), 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 8px 24px rgba(255, 179, 102, 0.4);
   margin-top: 32px;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.awake-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border-radius: 32px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.awake-button:hover::before {
+  opacity: 1;
+}
+
+.awake-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0px 12px 32px rgba(255, 179, 102, 0.5);
 }
 
 .awake-button:active {
-  transform: scale(0.98);
-  opacity: 0.9;
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0px 4px 16px rgba(255, 179, 102, 0.4);
 }
 
 .decorative-circle {

@@ -4,6 +4,7 @@ import SleepMode from '../views/SleepMode.vue'
 import WakeUp from '../views/WakeUp.vue'
 import DreamItem from '../views/DreamItem.vue'
 import Interrupted from '../views/Interrupted.vue'
+import DreamCollection from '../views/DreamCollection.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/interrupted',
     name: 'Interrupted',
     component: Interrupted
+  },
+  {
+    path: '/collection',
+    name: 'DreamCollection',
+    component: DreamCollection
   }
 ]
 
