@@ -3,6 +3,11 @@
     <div class="home-screen">
       <StatusBar />
       
+      <!-- Theme Selector -->
+      <div class="theme-selector-container">
+        <ThemeSelector />
+      </div>
+      
       <!-- Achievement Button -->
       <div class="achievement-button-container">
         <button class="achievement-button" @click="goToCollection">
@@ -40,11 +45,14 @@ import { useRouter } from 'vue-router'
 import SleepyCat from '../components/SleepyCat.vue'
 import StatusBar from '../components/StatusBar.vue'
 import AlarmBottomSheet from '../components/AlarmBottomSheet.vue'
+import ThemeSelector from '../components/ThemeSelector.vue'
 import { setAlarm, initAlarmManager, getActiveAlarm } from '../utils/alarmManager.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const router = useRouter()
 const catState = ref('awake')
 const showAlarm = ref(false)
+const { currentTheme } = useTheme()
 
 const goToSleep = () => {
   router.push('/sleep')
@@ -116,7 +124,7 @@ onUnmounted(() => {
   width: 100%;
   max-width: 448px;
   height: 698px;
-  background: linear-gradient(180deg, rgba(245, 235, 224, 1) 0%, rgba(232, 213, 196, 1) 100%);
+  background: var(--theme-background, linear-gradient(180deg, rgba(245, 235, 224, 1) 0%, rgba(232, 213, 196, 1) 100%));
   border-radius: 24px;
   box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -133,6 +141,13 @@ onUnmounted(() => {
   align-items: center;
   padding: 48px 0;
   position: relative;
+}
+
+.theme-selector-container {
+  position: absolute;
+  top: 60px;
+  left: 24px;
+  z-index: 10;
 }
 
 .achievement-button-container {
@@ -194,7 +209,7 @@ onUnmounted(() => {
 .rest-button {
   width: 320px;
   height: 64px;
-  background: linear-gradient(135deg, #D4B5A0 0%, #C8A690 100%);
+  background: linear-gradient(135deg, var(--theme-primary, #D4B5A0) 0%, var(--theme-secondary, #C8A690) 100%);
   border: none;
   border-radius: 32px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -253,16 +268,40 @@ onUnmounted(() => {
 @media (max-width: 480px) {
   .home-screen-wrapper {
     padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
   
   .home-screen {
     height: 100vh;
-    max-height: 698px;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
   
   .rest-button {
     width: calc(100% - 128px);
     max-width: 320px;
+  }
+}
+
+/* PWA Standalone mode specific styles */
+@media (display-mode: standalone) {
+  .home-screen-wrapper {
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
+  }
+  
+  .home-screen {
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
 }
 </style>

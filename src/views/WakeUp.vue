@@ -216,11 +216,17 @@ const handleWakeUp = () => {
 @media (max-width: 480px) {
   .wake-up-wrapper {
     padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
   
   .wake-up-screen {
     height: 100vh;
-    max-height: 698px;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
   
   .text-section {
@@ -230,6 +236,24 @@ const handleWakeUp = () => {
   .awake-button {
     width: calc(100% - 128px);
     max-width: 320px;
+  }
+}
+
+/* PWA Standalone mode specific styles */
+@media (display-mode: standalone) {
+  .wake-up-wrapper {
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
+  }
+  
+  .wake-up-screen {
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
 }
 </style>

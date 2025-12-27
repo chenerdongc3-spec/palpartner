@@ -254,11 +254,17 @@ const goHome = () => {
 @media (max-width: 480px) {
   .dream-item-wrapper {
     padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
   
   .dream-item-screen {
     height: 100vh;
-    max-height: 698px;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
   
   .text-section {
@@ -269,6 +275,24 @@ const goHome = () => {
   .thank-button {
     width: calc(100% - 128px);
     max-width: 320px;
+  }
+}
+
+/* PWA Standalone mode specific styles */
+@media (display-mode: standalone) {
+  .dream-item-wrapper {
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
+  }
+  
+  .dream-item-screen {
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
 }
 </style>

@@ -231,11 +231,17 @@ onUnmounted(() => {
 @media (max-width: 480px) {
   .interrupted-wrapper {
     padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
   
   .interrupted-screen {
     height: 100vh;
-    max-height: 698px;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
   
   .button-group {
@@ -245,6 +251,24 @@ onUnmounted(() => {
   .rest-more-button,
   .awake-button {
     width: 100%;
+  }
+}
+
+/* PWA Standalone mode specific styles */
+@media (display-mode: standalone) {
+  .interrupted-wrapper {
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
+  }
+  
+  .interrupted-screen {
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
 }
 </style>

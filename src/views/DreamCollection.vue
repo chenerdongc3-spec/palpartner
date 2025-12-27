@@ -274,11 +274,35 @@ const goBack = () => {
 @media (max-width: 480px) {
   .dream-collection-wrapper {
     padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
   
   .dream-collection-screen {
     height: 100vh;
-    max-height: 698px;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
+  }
+}
+
+/* PWA Standalone mode specific styles */
+@media (display-mode: standalone) {
+  .dream-collection-wrapper {
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
+  }
+  
+  .dream-collection-screen {
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    width: 100vw;
   }
 }
 </style>
