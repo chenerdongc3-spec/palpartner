@@ -4,8 +4,11 @@
       <StatusBar />
       <div class="dream-item-content">
         <div class="item-container">
-          <div class="dream-item-icon" :style="{ opacity: 0.8807780146598816 }">
+          <div class="dream-item-icon" :style="{ opacity: 0.8807780146598816 }" v-if="dreamItem">
             <span class="item-emoji">{{ dreamItem.emoji }}</span>
+            <div class="rarity-indicator" :style="{ background: rarityConfig[dreamItem.rarity]?.color }">
+              {{ rarityConfig[dreamItem.rarity]?.name }}
+            </div>
           </div>
         </div>
         
@@ -15,7 +18,7 @@
         
         <div class="text-section">
           <h1 class="dream-title">I found this in your dream</h1>
-          <p class="dream-item-name">{{ dreamItem.name }}</p>
+          <p class="dream-item-name" v-if="dreamItem">{{ dreamItem.name }}</p>
         </div>
         
         <button class="thank-button" @click="goHome">
@@ -38,19 +41,23 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import SleepyCat from '../components/SleepyCat.vue'
 import StatusBar from '../components/StatusBar.vue'
-import { addCollectedItem, dreamItems } from '../utils/dreamCollection.js'
+import { addCollectedItem, getRandomItemByTheme, rarityConfig } from '../utils/dreamCollection.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const router = useRouter()
+const { currentThemeId } = useTheme()
 
-const dreamItem = ref(dreamItems[0])
+const dreamItem = ref(null)
 
 onMounted(() => {
-  // 随机选择一个梦境物品
-  const randomIndex = Math.floor(Math.random() * dreamItems.length)
-  dreamItem.value = dreamItems[randomIndex]
-  
-  // 将物品添加到收藏中
-  addCollectedItem(dreamItem.value.id)
+  // 根据当前主题随机选择一个梦境物品
+  const selectedItem = getRandomItemByTheme(currentThemeId.value)
+  if (selectedItem) {
+    dreamItem.value = selectedItem
+    
+    // 将物品添加到收藏中
+    addCollectedItem(selectedItem.id)
+  }
 })
 
 const goHome = () => {
@@ -106,16 +113,34 @@ const goHome = () => {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .item-emoji {
   font-size: 3rem;
   line-height: 1;
+  margin-bottom: 8px;
+}
+
+.rarity-indicator {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
 .cat-section {

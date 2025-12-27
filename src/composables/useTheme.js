@@ -5,7 +5,7 @@ const themes = {
   sleepyCat: {
     id: 'sleepyCat',
     name: '困倦猫咪',
-    icon: '😴',
+    icon: '🐈',
     colors: {
       primary: '#D4B5A0',
       secondary: '#C8A690',
@@ -27,7 +27,7 @@ const themes = {
   morningBird: {
     id: 'morningBird',
     name: '晨鸟',
-    icon: '🐦',
+    icon: '🐔',
     colors: {
       primary: '#FFB366',
       secondary: '#FF9F4A',
@@ -48,7 +48,7 @@ const themes = {
   
   dreamyPurple: {
     id: 'dreamyPurple',
-    name: '梦幻紫',
+    name: '星河',
     icon: '🌙',
     colors: {
       primary: '#C8B6D6',

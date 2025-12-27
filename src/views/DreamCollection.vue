@@ -14,42 +14,59 @@
         <div class="header-spacer"></div>
       </div>
       
-      <!-- Date Section -->
-      <div class="date-section">
-        <span class="date-label">今天</span>
+      <!-- Theme Tabs -->
+      <div class="theme-tabs">
+        <button 
+          v-for="(theme, themeId) in dreamItemsByTheme" 
+          :key="themeId"
+          class="theme-tab"
+          :class="{ active: selectedTheme === themeId }"
+          @click="selectTheme(themeId)"
+        >
+          <span class="tab-icon">{{ theme.icon }}</span>
+          <span class="tab-name">{{ theme.name }}</span>
+          <div class="progress-indicator">
+            {{ getThemeProgress(themeId).collected }}/{{ getThemeProgress(themeId).total }}
+          </div>
+        </button>
       </div>
       
-      <!-- Collection Grid -->
+      <!-- Collection Content -->
       <div class="collection-content">
+        <div class="theme-header">
+          <h2 class="theme-title">{{ dreamItemsByTheme[selectedTheme]?.name }}</h2>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: `${currentProgress.percentage}%` }"></div>
+          </div>
+          <p class="progress-text">{{ currentProgress.collected }}/{{ currentProgress.total }} 已收集</p>
+        </div>
+        
         <div class="items-grid">
           <div 
-            v-for="item in collectedItems" 
+            v-for="item in currentThemeItems" 
             :key="item.id"
             class="dream-item-card"
+            :class="{ 
+              collected: isCollected(item.id),
+              [item.rarity]: true
+            }"
           >
             <div class="item-icon">
-              <span class="item-emoji">{{ item.emoji }}</span>
+              <span class="item-emoji" v-if="isCollected(item.id)">{{ item.emoji }}</span>
+              <span class="empty-placeholder" v-else>?</span>
+              <div 
+                class="rarity-border" 
+                :style="{ borderColor: rarityConfig[item.rarity]?.color }"
+              ></div>
             </div>
-            <span class="item-name">{{ item.name }}</span>
-          </div>
-          
-          <!-- Empty slots -->
-          <div 
-            v-for="n in emptySlots" 
-            :key="`empty-${n}`"
-            class="dream-item-card empty"
-          >
-            <div class="item-icon empty-icon">
-              <span class="empty-placeholder">?</span>
+            <span class="item-name" :class="{ collected: isCollected(item.id) }">
+              {{ isCollected(item.id) ? item.name : '未知' }}
+            </span>
+            <div class="rarity-tag" :style="{ background: rarityConfig[item.rarity]?.color }">
+              {{ rarityConfig[item.rarity]?.name }}
             </div>
-            <span class="item-name empty-name">未知</span>
           </div>
         </div>
-      </div>
-      
-      <!-- Bottom Stats -->
-      <div class="bottom-stats">
-        <p class="stats-text">总共收集了 {{ collectedItems.length }} 个梦境物品</p>
       </div>
       
       <div class="bottom-indicator"></div>
@@ -61,22 +78,31 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import StatusBar from '../components/StatusBar.vue'
-import { getCollectedItems, dreamItems } from '../utils/dreamCollection.js'
+import { 
+  dreamItemsByTheme, 
+  getCollectedItemsByTheme, 
+  getThemeProgress, 
+  isCollected,
+  rarityConfig 
+} from '../utils/dreamCollection.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const router = useRouter()
-const collectedItems = ref([])
+const { currentThemeId } = useTheme()
 
-// 计算空白槽位数量（显示网格布局）
-const emptySlots = computed(() => {
-  const totalSlots = 8 // 总共显示8个槽位
-  return Math.max(0, totalSlots - collectedItems.value.length)
-})
+const selectedTheme = ref(currentThemeId.value)
+
+// 当前主题的物品和进度
+const currentThemeItems = computed(() => dreamItemsByTheme[selectedTheme.value]?.items || [])
+const currentProgress = computed(() => getThemeProgress(selectedTheme.value))
+
+const selectTheme = (themeId) => {
+  selectedTheme.value = themeId
+}
 
 onMounted(() => {
-  const collectedIds = getCollectedItems()
-  collectedItems.value = collectedIds.map(id => {
-    return dreamItems.find(item => item.id === id)
-  }).filter(Boolean)
+  // 默认选择当前主题
+  selectedTheme.value = currentThemeId.value
 })
 
 const goBack = () => {
@@ -112,7 +138,7 @@ const goBack = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 16px 24px 8px;
   height: 56px;
 }
 
@@ -148,22 +174,96 @@ const goBack = () => {
   width: 40px;
 }
 
-.date-section {
-  padding: 0 24px 16px;
+.theme-tabs {
+  display: flex;
+  padding: 0 16px;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.date-label {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
+.theme-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.theme-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  backdrop-filter: blur(10px);
+}
+
+.theme-tab.active {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.tab-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.tab-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8B7355;
+}
+
+.progress-indicator {
+  font-size: 10px;
   color: #A8906F;
+  opacity: 0.8;
 }
 
 .collection-content {
   flex: 1;
-  padding: 0 24px;
+  padding: 16px 24px;
   overflow-y: auto;
+}
+
+.theme-header {
+  margin-bottom: 20px;
+}
+
+.theme-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: #8B7355;
+  margin: 0 0 12px 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(139, 115, 85, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #D4B5A0 0%, #C8A690 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #A8906F;
+  margin: 0;
 }
 
 .items-grid {
@@ -177,31 +277,33 @@ const goBack = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.8);
+  gap: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 20px;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  position: relative;
 }
 
-.dream-item-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.12);
+.dream-item-card.collected {
   background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.dream-item-card.empty {
-  background: rgba(255, 255, 255, 0.3);
-  opacity: 0.6;
-  border: 2px dashed rgba(139, 115, 85, 0.3);
+.dream-item-card.legendary {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
-.dream-item-card.empty:hover {
-  transform: none;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+.dream-item-card.epic {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.dream-item-card.rare {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .item-icon {
@@ -213,14 +315,22 @@ const goBack = () => {
   background: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.empty-icon {
-  background: rgba(255, 255, 255, 0.4);
+.rarity-border {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid;
+  border-radius: 50%;
+  opacity: 0.6;
 }
 
 .item-emoji {
-  font-size: 2rem;
+  font-size: 1.8rem;
   line-height: 1;
 }
 
@@ -233,15 +343,29 @@ const goBack = () => {
 .item-name {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #8B7355;
+  font-size: 12px;
+  line-height: 16px;
+  color: #A8906F;
   text-align: center;
+  opacity: 0.6;
 }
 
-.empty-name {
-  color: #A8906F;
-  opacity: 0.5;
+.item-name.collected {
+  color: #8B7355;
+  opacity: 1;
+  font-weight: 500;
+}
+
+.rarity-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 8px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .bottom-stats {
