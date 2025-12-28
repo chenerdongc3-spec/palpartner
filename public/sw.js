@@ -1,15 +1,16 @@
-const CACHE_NAME = 'sleep-companion-v1.0.0';
-const STATIC_CACHE_URLS = [
+const CACHE_NAME = 'sleep-companion-v1.0.1';
+const RUNTIME_CACHE = 'sleep-companion-runtime-v1';
+
+// 核心静态资源 - 安装时缓存
+const CORE_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
-  // 这些文件会在构建时生成，需要根据实际构建结果调整
-  // '/assets/index.css',
-  // '/assets/index.js',
+  '/manifest.json'
 ];
 
-// 动态缓存的资源
-const DYNAMIC_CACHE_URLS = [
+// 需要缓存的路由
+const CACHE_ROUTES = [
+  '/',
   '/collection',
   '/sleep',
   '/wake-up',
@@ -19,177 +20,215 @@ const DYNAMIC_CACHE_URLS = [
 
 // 安装事件 - 缓存核心资源
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing...');
+  console.log('[SW] Installing Service Worker...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Service Worker: Caching core files');
-        // 只缓存确定存在的文件
-        return cache.addAll([
-          '/',
-          '/manifest.json'
-        ]);
+        console.log('[SW] Caching core assets');
+        return cache.addAll(CORE_ASSETS);
       })
       .then(() => {
-        console.log('Service Worker: Core files cached');
-        // 强制激活新的 Service Worker
+        console.log('[SW] Core assets cached successfully');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('Service Worker: Cache failed', error);
+        console.error('[SW] Failed to cache core assets:', error);
       })
   );
 });
 
 // 激活事件 - 清理旧缓存
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating...');
+  console.log('[SW] Activating Service Worker...');
   
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              console.log('Service Worker: Deleting old cache', cacheName);
+          cacheNames
+            .filter((cacheName) => {
+              return cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE;
+            })
+            .map((cacheName) => {
+              console.log('[SW] Deleting old cache:', cacheName);
               return caches.delete(cacheName);
-            }
-          })
+            })
         );
       })
       .then(() => {
-        console.log('Service Worker: Activated');
-        // 立即控制所有客户端
+        console.log('[SW] Service Worker activated');
         return self.clients.claim();
       })
   );
 });
 
-// 拦截网络请求
+// Fetch 事件 - 网络请求拦截
 self.addEventListener('fetch', (event) => {
-  // 只处理 GET 请求
-  if (event.request.method !== 'GET') {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // 只处理同源 GET 请求
+  if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
   }
 
-  // 跳过非同源请求
-  if (!event.request.url.startsWith(self.location.origin)) {
+  // 对于导航请求（页面请求），使用 Network First 策略
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // 缓存成功的响应
+          const responseClone = response.clone();
+          caches.open(RUNTIME_CACHE).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // 网络失败时从缓存返回
+          return caches.match(request).then((cachedResponse) => {
+            return cachedResponse || caches.match('/');
+          });
+        })
+    );
     return;
   }
 
+  // 对于静态资源，使用 Cache First 策略
   event.respondWith(
-    caches.match(event.request)
+    caches.match(request)
       .then((cachedResponse) => {
-        // 如果缓存中有，直接返回
         if (cachedResponse) {
-          console.log('Service Worker: Serving from cache', event.request.url);
+          console.log('[SW] Serving from cache:', url.pathname);
           return cachedResponse;
         }
 
-        // 否则从网络获取
-        console.log('Service Worker: Fetching from network', event.request.url);
-        return fetch(event.request)
+        // 缓存未命中，从网络获取
+        return fetch(request)
           .then((response) => {
-            // 检查响应是否有效
+            // 只缓存成功的响应
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
-            // 克隆响应，因为响应流只能使用一次
-            const responseToCache = response.clone();
+            // 克隆响应用于缓存
+            const responseClone = response.clone();
 
-            // 缓存新的响应
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                // 只缓存特定类型的资源
-                const url = event.request.url;
-                if (url.includes('/assets/') || 
-                    url.endsWith('.html') || 
-                    url.endsWith('.css') || 
-                    url.endsWith('.js') ||
-                    DYNAMIC_CACHE_URLS.some(path => url.includes(path))) {
-                  console.log('Service Worker: Caching new resource', url);
-                  cache.put(event.request, responseToCache);
-                }
-              });
+            // 缓存静态资源
+            caches.open(RUNTIME_CACHE).then((cache) => {
+              // 只缓存特定类型的资源
+              if (shouldCache(url.pathname)) {
+                console.log('[SW] Caching new resource:', url.pathname);
+                cache.put(request, responseClone);
+              }
+            });
 
             return response;
           })
           .catch((error) => {
-            console.error('Service Worker: Fetch failed', error);
-            
-            // 如果是导航请求且网络失败，返回离线页面
-            if (event.request.mode === 'navigate') {
-              return caches.match('/');
-            }
-            
-            throw error;
+            console.error('[SW] Fetch failed:', error);
+            // 可以返回一个离线页面或默认资源
+            return caches.match('/');
           });
       })
   );
 });
 
+// 判断是否应该缓存该资源
+function shouldCache(pathname) {
+  // 缓存 JS、CSS、图片、字体等静态资源
+  const cacheExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot'];
+  return cacheExtensions.some(ext => pathname.endsWith(ext)) || 
+         pathname.includes('/assets/') ||
+         pathname.includes('/icons/');
+}
+
 // 处理消息事件
 self.addEventListener('message', (event) => {
+  console.log('[SW] Message received:', event.data);
+  
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-});
-
-// 后台同步（如果支持）
-self.addEventListener('sync', (event) => {
-  console.log('Service Worker: Background sync', event.tag);
   
-  if (event.tag === 'background-sync') {
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      // 这里可以添加后台同步逻辑，比如同步梦境收藏数据
-      Promise.resolve()
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        );
+      })
     );
   }
 });
 
-// 推送通知（如果需要）
-self.addEventListener('push', (event) => {
-  console.log('Service Worker: Push received');
+// 后台同步（可选）
+self.addEventListener('sync', (event) => {
+  console.log('[SW] Background sync:', event.tag);
   
+  if (event.tag === 'sync-dreams') {
+    event.waitUntil(
+      // 同步梦境收藏数据
+      syncDreamData()
+    );
+  }
+});
+
+// 同步数据的辅助函数
+async function syncDreamData() {
+  try {
+    console.log('[SW] Syncing dream data...');
+    // 这里可以添加实际的同步逻辑
+    return Promise.resolve();
+  } catch (error) {
+    console.error('[SW] Sync failed:', error);
+    throw error;
+  }
+}
+
+// 推送通知（可选）
+self.addEventListener('push', (event) => {
+  console.log('[SW] Push notification received');
+  
+  const title = 'Sleep Companion';
   const options = {
-    body: event.data ? event.data.text() : 'Sleep time reminder!',
+    body: event.data ? event.data.text() : 'Time to rest! 🌙',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
     vibrate: [200, 100, 200],
+    tag: 'sleep-reminder',
+    requireInteraction: false,
     data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'Open App',
-        icon: '/icons/icon-192x192.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: '/icons/icon-192x192.png'
-      }
-    ]
+      url: '/',
+      dateOfArrival: Date.now()
+    }
   };
 
   event.waitUntil(
-    self.registration.showNotification('Sleep Companion', options)
+    self.registration.showNotification(title, options)
   );
 });
 
-// 处理通知点击
+// 通知点击事件
 self.addEventListener('notificationclick', (event) => {
-  console.log('Service Worker: Notification clicked');
+  console.log('[SW] Notification clicked');
   
   event.notification.close();
 
-  if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
-  }
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // 如果已有窗口打开，聚焦它
+        for (let client of clientList) {
+          if (client.url === '/' && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // 否则打开新窗口
+        if (clients.openWindow) {
+          return clients.openWindow(event.notification.data.url || '/');
+        }
+      })
+  );
 });
