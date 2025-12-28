@@ -150,7 +150,7 @@ const goHome = () => {
   align-items: center;
   width: 260px;
   height: 260px;
-  margin-top: 140px;
+  margin-top: 100px;
 }
 
 .text-section {
@@ -159,7 +159,7 @@ const goHome = () => {
   gap: 8px;
   align-items: center;
   width: 280px;
-  margin-top: 16px;
+  margin-top: 24px;
 }
 
 .dream-title {
@@ -201,7 +201,7 @@ const goHome = () => {
   color: #FFFFFF;
   cursor: pointer;
   box-shadow: 0px 8px 24px rgba(200, 182, 214, 0.4);
-  margin-top: 16px;
+  margin-top: 40px;
   margin-bottom: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -291,6 +291,8 @@ const goHome = () => {
     box-shadow: none;
     max-width: none;
     width: 100vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   
   .text-section {
@@ -319,6 +321,8 @@ const goHome = () => {
     box-shadow: none;
     max-width: none;
     width: 100vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 </style>

@@ -409,6 +409,8 @@ const goBack = () => {
     box-shadow: none;
     max-width: none;
     width: 100vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
@@ -427,6 +429,8 @@ const goBack = () => {
     box-shadow: none;
     max-width: none;
     width: 100vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 </style>

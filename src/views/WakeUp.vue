@@ -87,7 +87,7 @@ const handleWakeUp = () => {
   align-items: center;
   width: 260px;
   height: 260px;
-  margin-top: 125px;
+  margin-top: 100px;
 }
 
 .text-section {
@@ -97,7 +97,7 @@ const handleWakeUp = () => {
   align-items: center;
   width: 300px;
   padding: 0 16px;
-  margin-top: 32px;
+  margin-top: 24px;
 }
 
 .greeting {
@@ -139,7 +139,7 @@ const handleWakeUp = () => {
   color: #FFFFFF;
   cursor: pointer;
   box-shadow: 0px 8px 24px rgba(255, 179, 102, 0.4);
-  margin-top: 32px;
+  margin-top: 24px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -228,6 +228,8 @@ const handleWakeUp = () => {
     box-shadow: none;
     max-width: none;
     width: 100vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   
   .text-section {
@@ -255,6 +257,8 @@ const handleWakeUp = () => {
     box-shadow: none;
     max-width: none;
     width: 100vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 </style>

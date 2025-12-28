@@ -173,6 +173,19 @@ onUnmounted(() => {
   }
 }
 
+@media (max-width: 480px) {
+  @keyframes panelSlideIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 20px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+}
+
 .panel-header {
   display: flex;
   align-items: center;
@@ -287,9 +300,12 @@ onUnmounted(() => {
 
 @media (max-width: 480px) {
   .theme-panel {
-    width: calc(100vw - 48px);
+    position: fixed;
+    top: auto;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+    width: calc(100vw - 48px);
     max-width: 340px;
   }
   
@@ -301,15 +317,24 @@ onUnmounted(() => {
   
   .themes-grid {
     grid-template-columns: 1fr;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  
+  .theme-overlay {
+    position: fixed;
   }
 }
 
 /* 确保在所有屏幕尺寸下都不超出边界 */
 @media (max-width: 380px) {
   .theme-panel {
-    width: calc(100vw - 32px);
+    position: fixed;
+    top: auto;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+    width: calc(100vw - 32px);
   }
   
   .theme-panel.panel-right {

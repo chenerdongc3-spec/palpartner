@@ -126,6 +126,8 @@ onMounted(() => {
   gap: 32px;
   position: relative;
   z-index: 2;
+  justify-content: center;
+  min-height: 500px;
 }
 
 .decorative-circle {
@@ -169,6 +171,8 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
+  overflow: visible;
 }
 
 
@@ -180,10 +184,11 @@ onMounted(() => {
   align-items: center;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 50%;
-  padding: 15px;
+  padding: 20px;
   box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: visible;
 }
 
 .cat-image {
@@ -340,13 +345,28 @@ onMounted(() => {
   }
   
   .modal-content {
-    padding: 40px 24px 24px;
-    gap: 24px;
+    padding: 32px 24px 24px;
+    gap: 20px;
+    min-height: auto;
+    justify-content: flex-start;
+  }
+  
+  .cat-section {
+    margin-top: 10px;
   }
   
   .cat-character {
-    width: 120px;
-    height: 120px;
+    width: 160px;
+    height: 160px;
+  }
+  
+  .cat-image {
+    width: 80%;
+    height: 80%;
+  }
+  
+  .text-section {
+    gap: 12px;
   }
   
   .alarm-title {
@@ -357,11 +377,14 @@ onMounted(() => {
   .alarm-subtitle {
     font-size: 14px;
     line-height: 20px;
+    max-width: 260px;
   }
   
   .button-group {
     flex-direction: column;
     gap: 12px;
+    width: 100%;
+    margin-top: 8px;
   }
   
   .rest-more-btn,
