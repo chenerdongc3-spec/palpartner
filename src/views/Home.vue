@@ -188,9 +188,9 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 200px;
-  margin-top: 141px;
+  width: 260px;
+  height: 260px;
+  margin-top: 100px;
 }
 
 .sleepy-text {
@@ -220,7 +220,7 @@ onUnmounted(() => {
   color: #FFFFFF;
   cursor: pointer;
   box-shadow: 0px 8px 24px rgba(212, 181, 160, 0.4);
-  margin-top: 93px;
+  margin-top: 40px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;

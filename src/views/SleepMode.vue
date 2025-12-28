@@ -4,7 +4,7 @@
       <StatusBar />
       <div class="sleep-content" @click="goToInterrupted">
         <div class="cat-section">
-          <LyingCat :state="'sleeping'" />
+          <LyingCat :state="'sleeping'" :custom-image="sleepGif" />
         </div>
         
         <p class="sleep-message">Let's lie down together</p>
@@ -34,6 +34,7 @@ import { useRouter } from 'vue-router'
 import LyingCat from '../components/LyingCat.vue'
 import StatusBar from '../components/StatusBar.vue'
 import AlarmModal from '../components/AlarmModal.vue'
+import sleepGif from '../assets/images/sleep.gif'
 
 const router = useRouter()
 const showAlarmModal = ref(false)
@@ -123,8 +124,8 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 240px;
-  height: 160px;
+  width: 280px;
+  height: 200px;
 }
 
 .sleep-message {

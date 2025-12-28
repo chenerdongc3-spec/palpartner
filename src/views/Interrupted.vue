@@ -4,7 +4,7 @@
       <StatusBar />
       <div class="interrupted-content">
         <div class="cat-section">
-          <LyingCat state="confused" />
+          <LyingCat state="confused" :custom-image="sleepGif" />
         </div>
         
         <p class="interrupted-message" :class="{ 'alarm-message': isAlarmTriggered }">
@@ -30,6 +30,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import LyingCat from '../components/LyingCat.vue'
 import StatusBar from '../components/StatusBar.vue'
+import sleepGif from '../assets/images/sleep.gif'
 
 const router = useRouter()
 const route = useRoute()
@@ -103,8 +104,9 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 200px;
+  width: 260px;
+  height: 260px;
+  margin-top: 80px;
 }
 
 .interrupted-message {

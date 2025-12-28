@@ -6,8 +6,11 @@
       <div class="content">
         <div class="header-section">
           <div class="cat-character">
-            <!-- Cat SVG will be replaced with actual component -->
-            <div class="cat-placeholder"></div>
+            <img 
+              src="/src/standby2.gif" 
+              alt="Character"
+              class="cat-image"
+            />
           </div>
           <p class="question">When should I wake you?</p>
         </div>
@@ -211,18 +214,17 @@ const setAlarm = () => {
 }
 
 .cat-character {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.cat-placeholder {
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+.cat-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .question {

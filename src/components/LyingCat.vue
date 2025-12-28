@@ -1,6 +1,13 @@
 <template>
   <div class="lying-cat-container" :class="state">
+    <img 
+      v-if="customImage"
+      :src="customImage" 
+      alt="Character"
+      class="cat-character"
+    />
     <svg 
+      v-else
       class="cat-character" 
       viewBox="0 0 200 150" 
       xmlns="http://www.w3.org/2000/svg"
@@ -102,6 +109,10 @@ defineProps({
     type: String,
     default: 'sleeping', // sleeping, confused
     validator: (value) => ['sleeping', 'confused'].includes(value)
+  },
+  customImage: {
+    type: String,
+    default: null
   }
 })
 </script>
@@ -119,6 +130,7 @@ defineProps({
   max-width: 300px;
   height: auto;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  object-fit: contain;
 }
 
 .lying-cat-container.sleeping .cat-character {

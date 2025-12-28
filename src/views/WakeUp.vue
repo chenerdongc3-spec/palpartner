@@ -4,7 +4,7 @@
       <StatusBar />
       <div class="wake-up-content">
         <div class="cat-section">
-          <StretchingCat />
+          <StretchingCat :custom-image="awakeGif" />
         </div>
         
         <div class="text-section">
@@ -31,6 +31,7 @@
 import { useRouter } from 'vue-router'
 import StretchingCat from '../components/StretchingCat.vue'
 import StatusBar from '../components/StatusBar.vue'
+import awakeGif from '../assets/images/awake & gifts.gif'
 
 const router = useRouter()
 
@@ -84,8 +85,8 @@ const handleWakeUp = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 220px;
-  height: 200px;
+  width: 260px;
+  height: 260px;
   margin-top: 125px;
 }
 

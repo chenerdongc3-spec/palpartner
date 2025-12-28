@@ -9,37 +9,11 @@
       <div class="modal-content">
         <div class="cat-section">
           <div class="cat-character">
-            <svg 
-              viewBox="0 0 120 120" 
-              xmlns="http://www.w3.org/2000/svg"
-              class="cat-svg"
-            >
-              <!-- 猫的头 -->
-              <circle cx="60" cy="60" r="45" fill="#D4C5B9" class="cat-head"/>
-              
-              <!-- 耳朵 -->
-              <path d="M 30 25 L 40 45 L 35 50 Z" fill="#D4C5B9" class="cat-ear"/>
-              <path d="M 90 25 L 80 45 L 85 50 Z" fill="#D4C5B9" class="cat-ear"/>
-              
-              <!-- 眼睛（睁开的，表示醒来） -->
-              <circle cx="50" cy="55" r="4" fill="#2C3E5A"/>
-              <circle cx="70" cy="55" r="4" fill="#2C3E5A"/>
-              <circle cx="50" cy="54" r="1.5" fill="#FFFFFF"/>
-              <circle cx="70" cy="54" r="1.5" fill="#FFFFFF"/>
-              
-              <!-- 鼻子 -->
-              <ellipse cx="60" cy="65" rx="3" ry="2" fill="#E8B4B8"/>
-              
-              <!-- 嘴巴（微笑） -->
-              <path d="M 60 68 Q 55 75 50 70" stroke="#2C3E5A" stroke-width="2" fill="none" stroke-linecap="round"/>
-              <path d="M 60 68 Q 65 75 70 70" stroke="#2C3E5A" stroke-width="2" fill="none" stroke-linecap="round"/>
-              
-              <!-- 胡须 -->
-              <line x1="25" y1="60" x2="35" y2="58" stroke="#2C3E5A" stroke-width="1.5" stroke-linecap="round"/>
-              <line x1="25" y1="65" x2="35" y2="65" stroke="#2C3E5A" stroke-width="1.5" stroke-linecap="round"/>
-              <line x1="85" y1="58" x2="95" y2="60" stroke="#2C3E5A" stroke-width="1.5" stroke-linecap="round"/>
-              <line x1="85" y1="65" x2="95" y2="65" stroke="#2C3E5A" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
+            <img 
+              src="/src/standby2.gif" 
+              alt="Character"
+              class="cat-image"
+            />
           </div>
         </div>
         
@@ -197,9 +171,10 @@ onMounted(() => {
   align-items: center;
 }
 
+
 .cat-character {
-  width: 140px;
-  height: 140px;
+  width: 220px;
+  height: 220px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -211,9 +186,10 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.cat-svg {
-  width: 100%;
-  height: 100%;
+.cat-image {
+  width: 400px;
+  height: 300px;
+  object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
   animation: gentle-breathe 4s ease-in-out infinite;
 }

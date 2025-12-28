@@ -13,7 +13,7 @@
         </div>
         
         <div class="cat-section">
-          <SleepyCat state="happy" />
+          <SleepyCat state="happy" :custom-image="awakeGif" />
         </div>
         
         <div class="text-section">
@@ -43,6 +43,7 @@ import SleepyCat from '../components/SleepyCat.vue'
 import StatusBar from '../components/StatusBar.vue'
 import { addCollectedItem, getRandomItemByTheme, rarityConfig } from '../utils/dreamCollection.js'
 import { useTheme } from '../composables/useTheme.js'
+import awakeGif from '../assets/images/awake & gifts.gif'
 
 const router = useRouter()
 const { currentThemeId } = useTheme()
@@ -147,9 +148,9 @@ const goHome = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 200px;
-  margin-top: 80px;
+  width: 260px;
+  height: 260px;
+  margin-top: 140px;
 }
 
 .text-section {
@@ -158,7 +159,7 @@ const goHome = () => {
   gap: 8px;
   align-items: center;
   width: 280px;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .dream-title {
@@ -200,7 +201,7 @@ const goHome = () => {
   color: #FFFFFF;
   cursor: pointer;
   box-shadow: 0px 8px 24px rgba(200, 182, 214, 0.4);
-  margin-top: 24px;
+  margin-top: 16px;
   margin-bottom: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;

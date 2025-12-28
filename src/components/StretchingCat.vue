@@ -1,6 +1,13 @@
 <template>
   <div class="stretching-cat-container">
+    <img 
+      v-if="customImage"
+      :src="customImage" 
+      alt="Character"
+      class="cat-character"
+    />
     <svg 
+      v-else
       class="cat-character" 
       viewBox="0 0 200 200" 
       xmlns="http://www.w3.org/2000/svg"
@@ -50,6 +57,12 @@
 </template>
 
 <script setup>
+defineProps({
+  customImage: {
+    type: String,
+    default: null
+  }
+})
 </script>
 
 <style scoped>
@@ -65,6 +78,7 @@
   height: auto;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
   animation: stretch-animation 2s ease-in-out infinite;
+  object-fit: contain;
 }
 
 .cat-paw {
