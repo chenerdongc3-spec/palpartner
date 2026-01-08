@@ -1,6 +1,6 @@
 # Sleep Companion Pet UI
 
-基于 Figma 设计的 Vue 3 应用
+基于 Figma 设计的 Vue 3 应用，heckthon初尝试，从UI/UX设计到前端开发。
 
 ## 安装依赖
 
